@@ -35,31 +35,34 @@ class Sala {
 
     val latas get(): MutableList<String> {
         var latasTintas = mutableListOf(LatasTinta(TamanhoLatasTinta.DEZOITO_LITROS),
-                                        LatasTinta(TamanhoLatasTinta.TRES_VIRGULA_SEIS_LITROS),
-                                        LatasTinta(TamanhoLatasTinta.DOIS_LITROS_E_MEIO),
-                                        LatasTinta(TamanhoLatasTinta.MEIO_LITRO))
+            LatasTinta(TamanhoLatasTinta.TRES_VIRGULA_SEIS_LITROS),
+            LatasTinta(TamanhoLatasTinta.DOIS_LITROS_E_MEIO),
+            LatasTinta(TamanhoLatasTinta.MEIO_LITRO))
 
         var litrosTinta = this.area / METROS_QUADRADOS_LITRO
 
-        while(litrosTinta > 0) {
-            if (litrosTinta >= TamanhoLatasTinta.DEZOITO_LITROS.value ) {
-                litrosTinta -= TamanhoLatasTinta.DEZOITO_LITROS.value
-                latasTintas.stream().filter { TamanhoLatasTinta.DEZOITO_LITROS.equals(it.tamanhoLatasTinta) }.findFirst().get().quantidade++
-            } else if (litrosTinta >= TamanhoLatasTinta.TRES_VIRGULA_SEIS_LITROS.value) {
-                litrosTinta -= TamanhoLatasTinta.TRES_VIRGULA_SEIS_LITROS.value
-                latasTintas.stream().filter { TamanhoLatasTinta.TRES_VIRGULA_SEIS_LITROS.equals(it.tamanhoLatasTinta) }.findFirst().get().quantidade++
-            } else if (litrosTinta >= TamanhoLatasTinta.DOIS_LITROS_E_MEIO.value) {
-                litrosTinta -= TamanhoLatasTinta.DOIS_LITROS_E_MEIO.value
-                latasTintas.stream().filter { TamanhoLatasTinta.DOIS_LITROS_E_MEIO.equals(it.tamanhoLatasTinta) }.findFirst().get().quantidade++
-            } else {
-                litrosTinta -= TamanhoLatasTinta.MEIO_LITRO.value
-                latasTintas.stream().filter { TamanhoLatasTinta.MEIO_LITRO.equals(it.tamanhoLatasTinta) }.findFirst().get().quantidade++
+        latasTintas.forEach{
+            if (litrosTinta >= it.tamanhoLatasTinta.value) {
+                it.quantidade = if (TamanhoLatasTinta.MEIO_LITRO.equals(it.tamanhoLatasTinta))
+                                    (this.rountToUp(litrosTinta) / it.tamanhoLatasTinta.value).toInt()
+                                else
+                                    (litrosTinta / it.tamanhoLatasTinta.value).toInt()
+                litrosTinta %= it.tamanhoLatasTinta.value
             }
         }
         return this.result(latasTintas)
     }
 
-    fun result(latasTintas: MutableList<LatasTinta>): MutableList<String> {
+    private fun rountToUp(value: Double): Double {
+        val str = "%.1f".format(value).toDouble().toString().split('.')
+        var num = str[0].toInt()
+        var dec = str[1].toInt()
+        num = if (dec > 5) ++num else num
+        dec = if (dec in 1..5) 5 else 0
+        return "%.1f".format("$num.$dec".toDouble()).toDouble()
+    }
+
+    private fun result(latasTintas: MutableList<LatasTinta>): MutableList<String> {
         val mutableList: MutableList<String> = mutableListOf()
         latasTintas.forEach{
             if (it.quantidade > 0) {
