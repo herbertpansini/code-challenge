@@ -1,0 +1,9 @@
+CREATE TABLE parede (
+ id BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT,
+ sala_id BIGINT(20) NULL,
+ largura DECIMAL(5, 2) NOT NULL,
+ altura DECIMAL(5, 2) NOT NULL,
+ quantidade_portas INTEGER NULL,
+ quantidade_janelas INTEGER NULL,
+ FOREIGN KEY (sala_id) REFERENCES sala(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
